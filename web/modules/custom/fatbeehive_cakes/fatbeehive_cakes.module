@@ -1,0 +1,88 @@
+<?php
+
+/**
+ * @file
+ * Contains fatbeehive_cakes.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Entity\Query\QueryFactory;
+
+
+
+/**
+ * Implements hook_help().
+ */
+function fatbeehive_cakes_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the fatbeehive_cakes module.
+    case 'help.page.fatbeehive_cakes':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Allows the visitor to enter their favourite cake name') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+
+
+/**
+ * Implements hook_form_alter() on behalf of fatbeehive_cakes.module.
+ */
+
+function fatbeehive_cakes_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+    // Change form id here
+    if ($form_id == 'cake_entity_add_form') {
+          // validation before submit
+          $form['#validate'][] = 'fatbeehive_cakes_validate';
+          // Custom submit handler to fire up
+          $form['actions']['submit']['#submit'][] = 'fatbeehive_cakes_add_cake_form_submit';
+      //\Drupal::messenger()->addMessage('Fetch the form');
+      
+
+    }
+    
+   
+
+}
+/**
+ *  Implementing custom validation for Cake entity add form 
+ */
+function fatbeehive_cakes_validate (&$form, FormStateInterface $form_state) {
+
+    // VALIDATION OF TITLE
+  
+}
+
+
+
+/**
+ *  Implementing custom submit handler function
+ */
+function fatbeehive_cakes_add_cake_form_submit ($form, FormStateInterface $form_state) {
+
+      //getting Cake name from form submition
+        $values = $form_state->getValue('name');
+        $nameCake = $values [0]['value'];
+
+        //\Drupal::messenger()->addMessage('Handler fired');
+      //Creating node
+
+      $node = Node::create([
+        'type'        => 'cake',
+        'title'       => $nameCake,
+      ]);
+      $node->save();
+
+
+    $form_state->setRedirect('<front>');
+  
+
+}

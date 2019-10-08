@@ -1,0 +1,9 @@
+# deprecation-detector
+/.rules
+
+# Composer
+/vendor
+composer.lock
+
+# Test
+/phpunit.xml
